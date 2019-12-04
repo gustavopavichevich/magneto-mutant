@@ -20,7 +20,10 @@ public class DataArray {
 	public void setDna(String[] dna) {
 		this.dna = dna;
 	}
-	
+	/***
+	 * Genera una matrizNxN
+	 * @return	Char[][]
+	 */
 	public char[][] getMatrizDna() {
 		int n = this.dna.length;
 		char matriz[][] = new char[n][n];

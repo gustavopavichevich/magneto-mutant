@@ -21,15 +21,15 @@ import com.mutant.model.entity.Stats;
 import com.mutant.util.BloodTest;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/")
 @CrossOrigin(origins = { "*" })
-public class MutantRest {
-	
+public class MutantRest{
+
 	@Autowired
 	IStatsDao statsDao;
-
+	
 	@PostMapping(path = "/mutant", consumes = "application/json")
-	public ResponseEntity<?> obtenerPersonal(@RequestBody String dna) throws Exception{
+	public ResponseEntity<?> obtenerPersonal(@RequestBody String dna) throws Exception {
 
 		// Declaraciones
 		Gson gson = new Gson();
@@ -39,8 +39,7 @@ public class MutantRest {
 		// valido la ocurrencia de los caracteres solicitados por Magneto
 		for (String var : dataArray.getDna()) {
 			if (!var.matches("^[AGTC]+$")) {
-				response.put("mensaje:", "Ingrese un tipo de dato conocido. Solo caracteres: [A,G,T,C].");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.FORBIDDEN);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.PRECONDITION_FAILED);
 			}
 		}
 		/*
@@ -53,24 +52,19 @@ public class MutantRest {
 		dato1 = dataArray.getMatrizDna().clone();
 
 		resultadoAnalisis = bloodTest.isMutant(dato1, dato2);
+		String strStats = String.join(" ", resultadoAnalisis);
 		try {
-			String strStats = String.join(" ", resultadoAnalisis);
-
 			if (resultadoAnalisis.size() > 1) {/* Guarda en la database el string de ADN mutante */
-
 				Stats stats = new Stats();
 				stats.setMutantDna(strStats);
 				statsDao.save(stats);
-
-				response.put("mensaje: ", "en esta secuencia se encontró ADN mutante.");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			} else {/* Guarda en la database el string de ADN no mutante */
-
+				strStats = String.join(" ", strStats.substring(dna.indexOf("["), dna.lastIndexOf("]")));
 				Stats stats = new Stats();
 				stats.setHumanDna(strStats);
 				statsDao.save(stats);
-		
-				response.put("mensaje: ", "en esta secuencia de ADN no es mutante.");
+
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.FORBIDDEN);
 			}
 		} catch (Exception e) {

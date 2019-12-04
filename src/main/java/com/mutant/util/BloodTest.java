@@ -93,7 +93,11 @@ public class BloodTest {
 		}
 		return lista;
 	}
-	
+	/***
+	 * Genera una matrizNxN cuadrada a partir de un String[]
+	 * @param secuencia	Es un String[]
+	 * @return	Char[][]
+	 */
 	// armado de matriz a partir de una secuencia de datos strings
 		public char[][] armaMatriz(String[] secuencia) {
 			int n = secuencia.length;

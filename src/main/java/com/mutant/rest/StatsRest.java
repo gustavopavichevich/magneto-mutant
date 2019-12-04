@@ -16,7 +16,7 @@ import com.mutant.model.dao.IStatsDao;
 import com.mutant.model.entity.Data;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/")
 @CrossOrigin(origins = { "*" })
 public class StatsRest {
 	
@@ -27,21 +27,15 @@ public class StatsRest {
 	@PostMapping(path = "/stats", produces = "application/json")
 	public ResponseEntity<?> obtenerPersonal() {
 
-		System.out.println("Count humanDna : " + statsDao.countByHumanDnaNotNull());
-		System.out.println("Count mutantDna : " + statsDao.countByMutantDnaNotNull());
-		System.out.println("Count humanDna : " + statsDao.count());
-		
 		Map<String, Object> response = new HashMap<>();
 		Gson gson = new Gson();
 		Data data = new Data();
 		
 		//recupero datos de la base
 		
-		
-		
-		data.setCount_mutant_dna("");
-		data.setCount_human_dna("");
-		data.setRatio(0.3);
+		data.setCount_mutant_dna(statsDao.countByMutantDnaNotNull().toString());
+		data.setCount_human_dna(statsDao.countByHumanDnaNotNull().toString());
+		data.setRatio((statsDao.count()/statsDao.countByMutantDnaNotNull()));
 		String ADN = gson.toJson(data);
 		
 		response.put("ADN",ADN);

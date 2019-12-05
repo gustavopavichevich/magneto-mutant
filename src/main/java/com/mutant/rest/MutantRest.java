@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ public class MutantRest{
 	@Autowired
 	IStatsDao statsDao;
 	
+	@Async
 	@PostMapping(path = "/mutant", consumes = "application/json")
 	public ResponseEntity<?> obtenerPersonal(@RequestBody String dna) throws Exception {
 
@@ -39,7 +41,7 @@ public class MutantRest{
 		// valido la ocurrencia de los caracteres solicitados por Magneto
 		for (String var : dataArray.getDna()) {
 			if (!var.matches("^[AGTC]+$")) {
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.PRECONDITION_FAILED);
+				return new ResponseEntity<Object>(HttpStatus.PRECONDITION_FAILED);
 			}
 		}
 		/*
@@ -58,18 +60,19 @@ public class MutantRest{
 				Stats stats = new Stats();
 				stats.setMutantDna(strStats);
 				statsDao.save(stats);
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+				return new ResponseEntity<Map<String, Object>>(HttpStatus.OK);
 			} else {/* Guarda en la database el string de ADN no mutante */
-				strStats = String.join(" ", strStats.substring(dna.indexOf("["), dna.lastIndexOf("]")));
+				strStats = dna.substring(8,dna.length()-1);
+				strStats = String.join(" ", strStats);
 				Stats stats = new Stats();
 				stats.setHumanDna(strStats);
 				statsDao.save(stats);
-
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.FORBIDDEN);
+				ResponseEntity<Object> responseE = new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+				return responseE;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		return null;
+		return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
 	}
 }

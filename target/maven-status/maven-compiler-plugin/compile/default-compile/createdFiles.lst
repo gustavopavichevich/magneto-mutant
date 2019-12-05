@@ -1,0 +1,10 @@
+com/mutant/util/BloodTest.class
+com/mutant/model/dao/IStatsDao.class
+com/mutant/model/entity/Data.class
+com/mutant/MvcConfig.class
+com/mutant/rest/MutantRest.class
+com/mutant/model/entity/DataArray.class
+com/mutant/model/entity/Stats.class
+com/mutant/SimpleRateLimiter.class
+com/mutant/rest/StatsRest.class
+com/mutant/MutantApplication.class
